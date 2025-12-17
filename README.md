@@ -146,7 +146,7 @@ go test ./...
 
 ## 📚 Documentation
 
-- **[EXPLANATION.md](EXPLANATION.md)** - How code works + Interview Q&A
+
 - **[reasoning.md](reasoning.md)** - Approach and key decisions
 
 ---
