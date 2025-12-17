@@ -1,36 +1,48 @@
-# User API - Go REST API Project
+# Ainyx Solutions Project - User API
 
-A simple REST API built with Go to manage users with automatic age calculation.
+A RESTful API built with Go (Fiber) + PostgreSQL + SQLC to manage users with dynamic age calculation.
+
+---
+
+## 🛠 Tech Stack
+
+- **Go** - Programming language
+- **Fiber** - HTTP framework
+- **PostgreSQL** - Database
+- **SQLC** - SQL code generator
+- **Validator** - Input validation
 
 ---
 
 ## 📁 Project Structure
 
 ```
-user-api/
-├── cmd/server/main.go          → Entry point (starts the app)
-├── config/config.go            → App settings
+├── cmd/server/main.go          → Entry point
+├── config/config.go            → Environment config
 ├── db/
-│   ├── migrations/             → SQL to create table
-│   └── sqlc/                   → Database functions
+│   ├── migrations/             → SQL schema
+│   └── sqlc/                   → Generated DB code
 ├── internal/
-│   ├── handler/                → HTTP request handlers
+│   ├── handler/                → HTTP handlers
 │   ├── service/                → Business logic
-│   ├── repository/             → Database operations
-│   ├── routes/                 → URL routes
-│   └── models/                 → Data structures
-├── go.mod                      → Go dependencies
-├── README.md                   → This file
-└── EXPLANATION.md              → Detailed explanation + Interview Q&A
+│   ├── repository/             → Database layer
+│   ├── routes/                 → Route definitions
+│   └── models/                 → Request/Response structs
+├── go.mod
+├── README.md
+├── EXPLANATION.md              → Interview Q&A
+└── reasoning.md                → Approach & decisions
 ```
 
 ---
 
 ## 🚀 How to Run
 
-### Step 1: Make sure PostgreSQL is running
+### Prerequisites
+- Go 1.21+
+- PostgreSQL
 
-### Step 2: Create database and table
+### Step 1: Create database
 ```sql
 CREATE DATABASE userdb;
 
@@ -43,12 +55,18 @@ CREATE TABLE users (
 );
 ```
 
-### Step 3: Run the server
+### Step 2: Set environment variables
+```bash
+export DATABASE_URL="postgres://postgres:yourpassword@localhost:5432/userdb?sslmode=disable"
+export PORT=3000
+```
+
+### Step 3: Run
 ```bash
 go run cmd/server/main.go
 ```
 
-Server runs at: **http://localhost:3000**
+Server starts at: **http://localhost:3000**
 
 ---
 
@@ -56,49 +74,65 @@ Server runs at: **http://localhost:3000**
 
 | Method | URL | Description |
 |--------|-----|-------------|
-| POST | /users | Create a new user |
-| GET | /users | Get all users |
-| GET | /users/:id | Get one user by ID |
-| PUT | /users/:id | Update a user |
-| DELETE | /users/:id | Delete a user |
+| POST | /users | Create user |
+| GET | /users | List all users (with age) |
+| GET | /users/:id | Get user by ID (with age) |
+| PUT | /users/:id | Update user |
+| DELETE | /users/:id | Delete user |
 
 ---
 
-## 📮 Test with Postman
+## 📮 API Examples
 
 ### Create User
-```
-POST http://localhost:3000/users
-Body (JSON):
+```http
+POST /users
+Content-Type: application/json
+
 {
-    "name": "Alice",
-    "dob": "1990-05-10"
+    "name": "Ashutosh",
+    "dob": "2000-05-15"
 }
 ```
 
-### Get All Users (returns age!)
-```
-GET http://localhost:3000/users
+**Response:**
+```json
+{
+    "id": 1,
+    "name": "Ashutosh",
+    "dob": "2000-05-15"
+}
 ```
 
-### Get One User
+### Get User (age calculated dynamically)
+```http
+GET /users/1
 ```
-GET http://localhost:3000/users/1
+
+**Response:**
+```json
+{
+    "id": 1,
+    "name": "Ashutosh",
+    "dob": "2000-05-15",
+    "age": 24
+}
 ```
 
 ### Update User
-```
-PUT http://localhost:3000/users/1
-Body (JSON):
+```http
+PUT /users/1
+Content-Type: application/json
+
 {
-    "name": "Alice Updated",
-    "dob": "1991-03-15"
+    "name": "Ashutosh Kumar",
+    "dob": "2000-05-15"
 }
 ```
 
 ### Delete User
-```
-DELETE http://localhost:3000/users/1
+```http
+DELETE /users/1
 ```
 
 ---
@@ -110,9 +144,13 @@ go test ./...
 
 ---
 
-## 📚 Learn More
+## 📚 Documentation
 
-See **EXPLANATION.md** for:
-- How each file works
-- Why we made certain decisions
-- Interview questions and answers
+- **[EXPLANATION.md](EXPLANATION.md)** - How code works + Interview Q&A
+- **[reasoning.md](reasoning.md)** - Approach and key decisions
+
+---
+
+## 👤 Author
+
+**Ashutosh** - [GitHub](https://github.com/ashutoshark)
